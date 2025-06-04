@@ -11,9 +11,14 @@ function App() {
   const prevNameRef = useRef('Clock-0');
   const isInitialMount = useRef(true); // Dodajemy ref do śledzenia pierwszego renderowania
 
+  // Używamy useRef do przechowywania referencji do timerów
+  const nameTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const firstIntervalTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
   useEffect(() => {
-    let nameTimer: NodeJS.Timeout | undefined;
-    let firstIntervalTimeout: NodeJS.Timeout | undefined; // Dodajemy ref dla pierwszego timeoutu
+    // Używamy refów zamiast zmiennych lokalnych
+    // let nameTimer: NodeJS.Timeout | undefined;
+    // let firstIntervalTimeout: NodeJS.Timeout | undefined; // Dodajemy ref dla pierwszego timeoutu
 
     if (isVisible) {
       if (isInitialMount.current) {
@@ -23,7 +28,8 @@ function App() {
         updateCountRef.current = 0;
         prevNameRef.current = 'Clock-0';
 
-        nameTimer = setInterval(() => {
+        nameTimerRef.current = setInterval(() => {
+          // Używamy nameTimerRef.current
           const increment = updateCountRef.current === 0 ? 4900 : 3300;
 
           counterRef.current = (counterRef.current + increment) % 10000;
@@ -56,7 +62,8 @@ function App() {
         updateCountRef.current = 1; // Oznaczamy pierwszą aktualizację jako wykonaną
 
         // Uruchamiamy timeout dla pierwszej wiadomości console.warn po 2900ms
-        firstIntervalTimeout = setTimeout(() => {
+        firstIntervalTimeoutRef.current = setTimeout(() => {
+          // Używamy firstIntervalTimeoutRef.current
           // Calculate increment and newName for the *next* update (the first one after the immediate update)
           const incrementForFirstWarn = 3300; // Zmieniona nazwa
 
@@ -73,7 +80,8 @@ function App() {
           updateCountRef.current += 1;
 
           // Po pierwszej wiadomości console.warn, uruchamiamy interwał dla kolejnych co 3300ms
-          nameTimer = setInterval(() => {
+          nameTimerRef.current = setInterval(() => {
+            // Używamy nameTimerRef.current
             const increment = 3300;
 
             counterRef.current = (counterRef.current + increment) % 10000;
@@ -89,24 +97,32 @@ function App() {
       }
     } else {
       // Zegar staje się ukryty, czyścimy interwały i timeouty
-      if (firstIntervalTimeout) {
-        clearTimeout(firstIntervalTimeout);
+      if (firstIntervalTimeoutRef.current) {
+        // Używamy firstIntervalTimeoutRef.current
+        clearTimeout(firstIntervalTimeoutRef.current);
+        firstIntervalTimeoutRef.current = undefined; // Czyścimy ref po wyczyszczeniu timera
       }
 
-      if (nameTimer) {
-        clearInterval(nameTimer);
+      if (nameTimerRef.current) {
+        // Używamy nameTimerRef.current
+        clearInterval(nameTimerRef.current);
+        nameTimerRef.current = undefined; // Czyścimy ref po wyczyszczeniu timera
       }
       // Nie resetujemy liczników/nazwy tutaj.
     }
 
     return () => {
       // Funkcja czyszcząca przy odmontowaniu lub zmianie isVisible
-      if (firstIntervalTimeout) {
-        clearTimeout(firstIntervalTimeout);
+      if (firstIntervalTimeoutRef.current) {
+        // Używamy firstIntervalTimeoutRef.current
+        clearTimeout(firstIntervalTimeoutRef.current);
+        firstIntervalTimeoutRef.current = undefined; // Czyścimy ref po wyczyszczeniu timera
       }
 
-      if (nameTimer) {
-        clearInterval(nameTimer);
+      if (nameTimerRef.current) {
+        // Używamy nameTimerRef.current
+        clearInterval(nameTimerRef.current);
+        nameTimerRef.current = undefined; // Czyścimy ref po wyczyszczeniu timera
       }
     };
   }, [isVisible]);

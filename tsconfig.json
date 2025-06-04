@@ -3,15 +3,6 @@
   "include": ["src"],
   "compilerOptions": {
     "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
     "sourceMap": false,
     "types": ["node", "cypress"]
   }
